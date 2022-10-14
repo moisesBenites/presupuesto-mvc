@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Category>
+
+@{
+	ViewData["Title"] = "Categorías";
+
+	string GetValueEnum(OperationTypeEnum operationTypeId)
+	{
+		string value = operationTypeId.ToString() == "Bill" ? "Gasto" : "Ingreso";
+		return value;
+	}
+}
+
+<h1>Categorías</h1>
+<h5>La categoría nos permite indicar en qué gastamos nuestro dinero, también de dónde provienen nuestros ingresos.</h5>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Crear Nuevo</a>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Acciones</th>
+			<th>Nombre</th>
+			<th>Tipo</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var category in Model)
+		{
+			<tr>
+				<td>
+					<a class="btn btn-primary" asp-action="Edit" asp-route-id="@category.id">Editar</a>
+					<a class="btn btn-danger" asp-action="Delete" asp-route-id="@category.id">Borrar</a>
+				</td>
+				<td>@category.name</td>
+				<td>@GetValueEnum(category.operationTypeId)</td>
+			</tr>
+		}
+	</tbody>
+</table>

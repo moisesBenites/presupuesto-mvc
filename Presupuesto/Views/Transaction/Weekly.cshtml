@@ -1,0 +1,53 @@
+﻿@model WeeklyReportViewModel
+
+@{
+	ViewData["Title"] = "Reporte Semanal";
+
+	string DateFormat(DateTime date)
+	{
+		return date.ToString("dd-MMM");
+	}
+	var amountResume = new AmountResumeViewModel()
+	{
+		bills = Model.bills,
+		entries = Model.entries,
+		total = Model.total
+	};
+
+}
+
+<partial name="_Submenu" Model="TransactionMenuEnum.WEEKLY"/>
+
+<partial name="_NavegationDate" model="@Model.referenceDate" />
+
+<partial name="_AmountResume" model="@amountResume" />
+
+
+<table class="table" style="font-size:20px;">
+	<thead>
+		<tr>
+			<th>Semana</th>
+			<th style="text-align:right">Ingresos</th>
+			<th style="text-align:right">Gastos</th>
+		</tr>
+	</thead>
+	@foreach (var trans in Model.transactions)
+	{
+			<tr>
+					<td>
+							<a style="text-decoration:none" asp-action="Index" 
+								asp-route-year="@Model.referenceDate.Year" 
+								asp-route-month="@Model.referenceDate.Month">
+								@DateFormat(trans.initialDate) ~
+								@DateFormat(trans.finalDate)
+							</a>
+					</td>
+					<td class="active" style="text-align: right">
+						@trans.entry
+					</td>
+					<td class="pasive" style="text-align: right">
+						@trans.bill
+				    </td>
+			</tr>
+	}
+</table>

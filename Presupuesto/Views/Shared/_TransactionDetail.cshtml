@@ -1,0 +1,54 @@
+﻿@model TransactionDetailReport
+
+@{
+	var amountResume = new AmountResumeViewModel()
+	{
+		bills = Model.billBalance,
+		entries = Model.depositBalance,
+		total = Model.total
+	};
+}
+
+<partial name="_NavegationDate" model="@Model.initialDate" />
+
+<partial name="_AmountResume" model="@amountResume" />
+
+@if (Model.transactions.Count() == 0)
+{
+		<h5 class="text-center mt-2">No hay datos para mostrar</h5>
+}
+else
+{
+		<table class="table">
+			<tbody>
+			@foreach (var trans in Model.transactions)
+			{
+						<tr style="background-color: lightblue; font-size: 26px">
+							<td colspan="3">
+						@trans.date.Day <span class="badge bg-secondary">@trans.date.ToString("ddd")</span>
+							</td>
+							<td class="active">@trans.depositBalance.ToString("N")</td>
+							<td class="pasive">@trans.billBalance.ToString("N")</td>
+						</tr>
+				@foreach (var t in trans.transactions)
+				{
+								<tr style="vertical-align: middle">
+									<td>
+										<a asp-controller="Transaction" asp-action="Edit" asp-route-id="@t.id" asp-route-url="@ViewBag.url">
+											<i class="bi-pencil"></i>
+										</a>
+									</td>
+									<td>@t.category</td>
+									<td>@t.cuenta</td>
+									<td class="active">
+							@(t.operationTypeId == OperationTypeEnum.Entry ? t.amount.ToString("N") : null)
+									</td>
+									<td class="pasive">
+							@(t.operationTypeId == OperationTypeEnum.Bill ? t.amount.ToString("N") : null)
+									</td>
+								</tr>
+				}
+			}
+			</tbody>
+		</table>
+}

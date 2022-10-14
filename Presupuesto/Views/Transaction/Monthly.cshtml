@@ -1,0 +1,53 @@
+﻿@model MontlyReportViewModel
+
+@{
+	ViewData["Title"] = "Reporte Mensual";
+	int lastYear = Model.year - 1;
+	int nextYear = Model.year + 1;
+	var amountResume = new AmountResumeViewModel()
+			{
+				bills = Model.bills,
+				entries = Model.entries,
+				total = Model.total
+			};
+}
+
+<partial name="_Submenu" Model="TransactionMenuEnum.MONTHLY"/>
+
+<h4>
+	Mostrando transacciones de
+	<a asp-route-year="@lastYear" class="btn btn-secondary">
+		<i class="bi-chevron-left"></i>
+	</a>
+	@Model.year
+	<a asp-route-year="@nextYear" class="btn btn-secondary">
+		<i class="bi-chevron-right"></i>
+	</a>
+</h4>
+
+<partial name="_AmountResume" model="@amountResume" />
+
+<table class="table" style="font-size: 20px">
+	<thead>
+		<tr style="background-color: lightblue">
+			<th>Mes</th>
+			<th style="text-align: right">Ingresos</th>
+			<th style="text-align: right">Gastos</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var trans in Model.transactions)
+		{
+				<tr>
+						<td>
+								<a style="text-decoration: none" asp-action="Index"
+							       asp-route-year="@Model.year" asp-route-month="@trans.month">
+									@trans.referenceDate.ToString("MMM")
+								</a>
+						</td>
+							<td class="active" style="text-align: right">@trans.entry</td>
+							<td class="pasive" style="text-align: right">@trans.bill</td>
+				</tr>
+		}
+	</tbody>
+</table>

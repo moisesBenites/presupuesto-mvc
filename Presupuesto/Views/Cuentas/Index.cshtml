@@ -1,0 +1,100 @@
+﻿@using System.Globalization
+@model IEnumerable<IndiceCuentasViewModel>
+@{
+	ViewData["Title"] = "Cuentas";
+
+	string FormatearBalance(decimal balance)
+	{
+		var value =String.Format(CultureInfo.InvariantCulture,"{0:0,0.00}", balance);
+		return value;
+	}
+
+	string ObtenerClaseBalance(decimal balance)
+	{
+		return balance >= 0 ? "active" : "pasive";
+	}
+}
+
+
+<h1>Cuentas</h1>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Crear Nuevo</a>
+
+<div class="total-container">
+	<div>
+		<div>
+			<strong>Activos</strong>
+		</div>
+		<div class="active">
+			@FormatearBalance(Model.Where(x => x.balance > 0).Sum(x => x.balance))
+		</div>
+	</div>
+
+	<div>
+		<div>
+			<strong>Pasivos</strong>
+		</div>
+		<div class="pasive">
+			@FormatearBalance(Model.Where(x => x.balance < 0).Sum(x => x.balance))
+		</div>
+	</div>
+
+	<div>
+		<div>
+			<strong>Total</strong>
+		</div>
+		@{
+			var value = Model.Sum(x => x.balance);
+			var formatValue = FormatearBalance(value);
+			var claseTotal = ObtenerClaseBalance(value);
+		    <div class="@claseTotal">
+		    	@value
+		    </div>
+
+		}
+	</div>
+
+</div>
+
+<div class="accordion accordion-accounts">
+	@foreach (var tipoCuenta in Model)
+	{
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="cabeceraUno">
+				@{
+					var id = tipoCuenta.tipoCuenta.Replace(" ", "");
+					var dataBSTarget = "#" + id;
+					var claseTipoCuenta = ObtenerClaseBalance(tipoCuenta.balance);
+				}
+				<button class="accordion-button" type="button" data-bs-toogle="collapse" data-bs-target="@dataBSTarget">
+					<span class="me-3">
+						<span><strong>@tipoCuenta.tipoCuenta</strong></span>
+						<span class="@claseTipoCuenta">@FormatearBalance(tipoCuenta.balance)</span>
+					</span>
+				</button>
+			</h2>
+			<div id="@id" class="accordion-collapse collapse show">
+				<div>
+					<ul class="list-group">
+						@foreach (var cuenta in tipoCuenta.cuentas)
+						{
+							var claseCuenta = ObtenerClaseBalance(cuenta.balance);
+							<li class="list-group-item">
+								<span>
+									<strong><a asp-action="Detail" asp-route-id="@cuenta.id">@cuenta.nombre</a></strong>
+									<a class="btn btn-primary" asp-action="Edit" asp-route-id="@cuenta.id">
+										<i class="bi-pencil-fill"></i>
+									</a>
+									<a class="btn btn-danger" asp-action="Delete" asp-route-id="@cuenta.id">
+										<i class="bi-trash-fill"></i>
+									</a>
+							    </span>
+								<span class="@claseCuenta">@FormatearBalance(cuenta.balance)</span>
+							</li>
+						}
+					</ul>
+				</div>
+			</div>
+		</div>
+	}
+</div>

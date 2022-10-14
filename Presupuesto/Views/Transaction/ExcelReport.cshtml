@@ -1,0 +1,48 @@
+﻿
+@{
+	ViewData["Title"] = "Reporte de Excel";
+	var today = DateTime.Today;
+	var oneMonthAgo = today.AddMonths(-1);
+	var month = today.Month;
+	var year = today.Year;
+	var lastMonth = oneMonthAgo.Month;
+	var lastYear = oneMonthAgo.Year;
+}
+
+<partial name="_Submenu" Model="TransactionMenuEnum.EXCEL"/>
+
+<h1>Exportar Transacciones a Excel</h1>
+
+<div class="mb-3">
+	<a asp-action="ExcelExportByMonth" asp-route-month="@month" asp-route-year="@year" class="btn btn-success">
+		Exportar mes actual
+	</a>
+	~ @today.ToString("MMMM yyyy")
+</div>
+
+<div class="mb-3">
+	<a asp-action="ExcelExportByMonth" asp-route-month="@lastMonth" asp-route-year="@lastYear" class="btn btn-success">
+		Exportar mes anterior
+	</a>
+	~ @oneMonthAgo.ToString("MMMM yyyy")
+</div>
+
+<div class="mb-3">
+	<a asp-action="ExcelExportByYear" asp-route-year="@year" class="btn btn-success">
+		Exportar año actual
+	</a>
+	~ @year.ToString()
+</div>
+
+<div class="mb-3">
+	<a asp-action="ExcelExportByYear" asp-route-year="@(year - 1)" class="btn btn-success">
+		Exportar año anterior
+	</a>
+	~ @(lastYear - 1)
+</div>
+
+<div class="mb-3">
+	<a asp-action="ExcelExportAll" class="btn btn-success">
+		Exportar todo
+	</a>
+</div>

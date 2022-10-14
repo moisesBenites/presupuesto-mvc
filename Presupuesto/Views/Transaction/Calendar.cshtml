@@ -1,0 +1,99 @@
+﻿
+@{
+	ViewData["Title"] = "Calendario";
+}
+
+<partial name="_Submenu" Model="TransactionMenuEnum.CALENDAR"/>
+
+<div id="calendar"></div>
+
+<div class="modal fade" id="transactionModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Transacciones del día</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th id="tableDateModal" colspan="2"></th>
+							<th id="tableEntryModal" class="active"></th>
+							<th id="tableBillModal" class="pasive"></th>
+						</tr>
+					</thead>
+					<tbody id="tableBodyModal"></tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+			<script src="~/lib/fullcalendar//main.min.js"></script>
+			<script>
+				document.addEventListener("DOMContentLoaded", function() {
+					const calendarEl = document.getElementById("calendar");
+					const calendar = new FullCalendar.Calendar(calendarEl, {
+						dayMaxEventRows: 3,
+						initialView: 'dayGridMonth',
+						events: '/Transaction/GetCalendarTransaction',
+						dateClick: async function(info) {
+							console.log('info', info);
+							await findTRansactionByDate(info.dateStr)
+						}
+					});
+
+					calendar.render();
+				});
+
+				async function findTRansactionByDate(date) {
+					const response = await fetch(`/Transaction/GetTransactionByDate?date=${date}`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'applycation/json'
+						}
+					});
+
+					const json = await response.json();
+					let entries = 0;
+					let bills = 0;
+					const billOperationTypeId = 2;
+
+					const formated = new Intl.NumberFormat('en-US', {
+						style: 'currency',
+						currency: 'USD'
+					});
+
+					const rows = json.map(transaction => {
+							if (transaction.operationTypeId === billOperationTypeId) {
+								bills += transaction.amount;
+							} else {
+								entries += transaction.amount;
+							}
+
+							return `
+									<tr>
+										<td>${transaction.category}</td>
+										<td>${transaction.cuenta}</td>
+										<td align="right" colspan="2" class="${transaction.operationTypeId === billOperationTypeId ? 'pasive' : 'active'}">
+												${formated.format(transaction.amount)}
+										</td>
+									</tr>
+							`;
+					});
+
+						$("#tableBodyModal").html(rows);
+						$("#tableEntryModal").html(formated.format(entries));
+						$("#tableBillModal").html(formated.format(bills));
+						$("#tableDateModal").html(date);
+
+					const transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+					transactionModal.show();
+				}
+			</script>
+}

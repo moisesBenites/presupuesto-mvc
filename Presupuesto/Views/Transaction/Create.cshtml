@@ -1,0 +1,59 @@
+﻿@model CreateTransactionViewModel
+
+@{
+	ViewData["Title"] = "Crear Transación";
+}
+
+<h1>Crear Transacción</h1>
+<h5>Una Transacción te permite indicar tus ingresos y gastos</h5>
+
+<form asp-action="Create">
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="date"></label>
+		<input asp-for="date" class="form-control" />
+		<span class="text-danger" asp-validation-for="date"></span>
+	</div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="cuentaId"></label>
+		<select class="form-select" asp-items="Model.Cuentas" asp-for="cuentaId"></select>
+		<span class="text-danger" asp-validation-for="cuentaId"></span>
+	</div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="operationTypeId"></label>
+		<select asp-for="operationTypeId" class="form-select" asp-items="Html.GetEnumSelectList<OperationTypeEnum>()"></select>
+		<span class="text-danger" asp-validation-for="operationTypeId"></span>
+	</div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="categoryId"></label>
+		<select asp-for="categoryId" class="form-select"></select>
+		<span class="text-danger" asp-validation-for="categoryId"></span>
+	</div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="amount"></label>
+		<input asp-for="amount" class="form-control" />
+		<span class="text-danger" asp-validation-for="amount"></span>
+	</div>
+	<div class="mb-3">
+		<label class="label-form" asp-for="note"></label>
+		<textarea asp-for="note" class="form-control"></textarea>
+		<span class="text-danger" asp-validation-for="note"></span>
+	</div>
+	<button class="btn btn-primary" type="submit">Enviar</button>
+	<a href="" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+
+	<script src="~/js/TransactionForm.js" asp-append-version="true"></script>
+
+	<script>
+
+        const urlGetCategories = '@Url.Action("GetCategories")';
+
+		$(function() {
+            TransactionFormInit(urlGetCategories);
+		})
+	</script>
+}

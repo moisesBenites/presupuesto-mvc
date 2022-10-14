@@ -1,0 +1,13 @@
+﻿@model Category
+
+@{
+	ViewData["Title"] = "Borrar Categoría";
+}
+
+<h3 class="mb-3">¿Etsá segruo que desea borrar la categoría?</h3>
+
+<form asp-action="DeleteCategory">
+	<input type="hidden" asp-for="id" />
+	<button class="btn btn-danger" type="submit">Borrar</button>
+	<a class="btn btn-secondary" asp-action="Index">Cancelar</a>
+</form>

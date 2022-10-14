@@ -1,0 +1,14 @@
+﻿@model Cuenta
+
+
+@{
+	ViewData["Title"] = "Borrar Cuenta";
+}
+
+<h3 class="mb-3">¿Está seguro que desea borrar la cuenta @Model.nombre?</h3>
+
+<form asp-action="DeleteAccount">
+	<input type="hidden" asp-for="id" />
+	<button class="btn btn-danger" type="submit">Borrar</button>
+	<a class="btn btn-secondry" asp-action="Index">Cancelar</a>
+</form>
